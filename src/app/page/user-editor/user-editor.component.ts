@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+
 import { User } from 'src/app/model/user';
 import { UserService } from 'src/app/service/user.service';
 
@@ -32,9 +32,31 @@ export class UserEditorComponent implements OnInit {
   constructor(
     private userService: UserService,
     private activatedRoute: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
   }
 
+  onUpdate(user: User): void {
+    if (user.id === 0) {
+      this.createUser(user);
+    } else {
+      this.updateUser(user);
+    }
+  }
+
+  createUser(user: User): void {
+    this.userService.create(user).subscribe(
+      () => { this.router.navigate(['']); },
+      () => { alert('Error occured while adding new User'); }
+    );
+  }
+
+  updateUser(user: User): void {
+    this.userService.update(user).subscribe(
+      () => { this.router.navigate(['']) },
+      () => { alert('Error occured while updating User'); }
+    );
+  }
 }

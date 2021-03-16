@@ -1,7 +1,7 @@
 <div class="row">
   <div *ngIf="user$ | async as user" class="col-6 offset-3 mt-3">
     <h2>Update / Create User</h2>
-    <form #userForm="ngForm">
+    <form #userForm="ngForm" (ngSubmit)="onUpdate(user)">
       <input name="id" type="hidden" [(ngModel)]="user.id">
       <div class="form-group">
         <label>Name</label>
@@ -10,7 +10,14 @@
         class="form-control"
         type="text"
         name="name"
-        [(ngModel)]="user.name">
+        [(ngModel)]="user.name"
+        pattern=".{8,40}" required>
+        <div 
+          [style.opacity]="!userForm.controls.name?.touched || userForm.controls.name?.valid ? '0' : '1'"
+          [style.visibility]="!userForm.controls.name?.touched || userForm.controls.name?.valid ? 'hidden' : 'visible'"
+          class="error-message">
+          The name must be at least 8 and at most 40 characters long
+        </div>
       </div>
       <div class="form-group">
         <label>Email</label>
@@ -20,8 +27,16 @@
           class="form-control"
           type="text"
           name="email"
-          [(ngModel)]="user.email">
+          [(ngModel)]="user.email"
+          pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
+          <div 
+            [style.opacity]="!userForm.controls.email?.touched || userForm.controls.email?.valid ? '0' : '1'"
+            [style.visibility]="!userForm.controls.email?.touched || userForm.controls.email?.valid ? 'hidden' : 'visible'"
+            class="error-message">
+            Missing email address, or invalid format.
+          </div>
         </div>
+        
         <div class="form-group">
           <label>Address</label>
           <!-- Validation: min 8 char, max 100 char, required -->
@@ -29,7 +44,14 @@
           class="form-control"
           type="text"
           name="address"
-          [(ngModel)]="user.address">
+          [(ngModel)]="user.address"
+          pattern=".{8,100}" required>
+        <div 
+          [style.opacity]="!userForm.controls.address?.touched || userForm.controls.address?.valid ? '0' : '1'"
+          [style.visibility]="!userForm.controls.address?.touched || userForm.controls.address?.valid ? 'hidden' : 'visible'"
+          class="error-message">
+          The address must be at least 8 and at most 100 characters long
+        </div>
       </div>
       <div class="form-group">
         <label>Active</label>
@@ -39,7 +61,8 @@
           <option [ngValue]="false">inactive</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary btn-block mt-5">
+      <button [disabled]="userForm.invalid"
+        type="submit" class="btn btn-primary btn-block mt-5 submit">
         <i class="fa fa-save"></i>
       </button>
     </form>
